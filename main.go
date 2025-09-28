@@ -8,49 +8,61 @@ import (
 	"github.com/charmbracelet/log"
 )
 
+type cell struct {
+	alive bool
+	x     int
+	y     int
+}
+
 func main() {
-	log.SetLevel(log.DebugLevel)
 
 	seed, _ := utils.GenSeed()
+	//seed, _ := new(big.Int).SetString("99999999999999999999", 10)
 	log.Debug("The seed was generated", "seed", seed)
 	log.Debug("The seeds lenght is", "len", len(seed.String()))
 
 	grid := utils.GenGrid(seed)
 
-	type cell struct {
-		alive bool
-		x     int
-		y     int
+	tick := config.Tick
+	for {
+		log.Info("Time step", "tick", tick)
+
+		cellMap := new([]cell)
+		grid = Update(grid)
+		UpdateCellMap(cellMap, grid)
+		utils.PrintCellMap(grid)
+
+		log.Debug("Cell map", "map", cellMap)
+
+		liveCells := utils.CountLiveCells(grid)
+		log.Debug("Live cells remaining", "count", liveCells)
+
+		if liveCells == 0 {
+			log.Info("All cells died - simulation ended", "final_tick", tick)
+			break
+		}
+
+		if tick >= 10000 {
+			break
+		}
+		tick += 1
 	}
+}
 
-	cellMap := new([]cell)
-
-	for i := 0; i < config.GridWidth; i++ {
-		for j := 0; j < config.GridHeight; j++ {
-			value, err := simulation.CheckLife(i, j, grid)
+func UpdateCellMap(cellMap *[]cell, grid [][]bool) {
+	for x := 0; x < config.GridWidth; x++ {
+		for y := 0; y < config.GridHeight; y++ {
+			value, err := simulation.CheckLife(x, y, grid)
 			if err != nil {
 				log.Fatal(err)
 			}
 			currentCell := cell{
 				alive: value,
-				x:     i,
-				y:     j,
+				x:     x,
+				y:     y,
 			}
 			*cellMap = append(*cellMap, currentCell)
 		}
-	}
-
-	tick := config.Tick
-	for {
-		log.Debug("Time step", "tick", tick)
-		log.Debug("Cell map", "map", cellMap)
-
-		grid = Update(grid)
-
-		if tick >= 20 {
-			break
-		}
-		tick += 1
 	}
 }
 
@@ -59,19 +71,19 @@ func Update(grid [][]bool) [][]bool {
 		return grid
 	}
 
-	newGrid := make([][]bool, config.GridHeight)
+	newGrid := make([][]bool, config.GridWidth)
 	for i := range newGrid {
-		newGrid[i] = make([]bool, config.GridWidth)
+		newGrid[i] = make([]bool, config.GridHeight)
 	}
 
-	for y := range config.GridHeight {
-		for x := range config.GridWidth {
+	for x := 0; x < config.GridWidth; x++ {
+		for y := 0; y < config.GridHeight; y++ {
 			isAlive, err := simulation.CheckLife(x, y, grid)
 			if err != nil {
 				log.Error("Check life failed", "err", err)
 				continue
 			}
-			newGrid[y][x] = isAlive
+			newGrid[x][y] = isAlive
 		}
 	}
 

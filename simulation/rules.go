@@ -38,13 +38,13 @@ func CheckLife(x, y int, grid [][]bool) (bool, error) {
 		nx, ny := x+i.dx, y+i.dy
 
 		if nx < config.GridWidth && nx >= 0 && ny < config.GridHeight && ny >= 0 {
-			if grid[ny][nx] { // Again, grid[y][x] format
+			if grid[ny][nx] {
 				ln++
 			}
 		}
 	}
 
-	return ln > 2, nil
+	return ln >= 2, nil
 }
 
 // OLD CheckLive function

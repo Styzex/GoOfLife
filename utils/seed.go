@@ -34,9 +34,10 @@ func GenGrid(seed *big.Int) [][]bool {
 			idx := (y*config.GridWidth + x) % seedLen
 
 			c, _ := strconv.Atoi(string(seedStr[idx]))
-			n, _ := rand.Int(rand.Reader, big.NewInt(9))
+			n, _ := rand.Int(rand.Reader, big.NewInt(8))
+			m := int(n.Int64())
 
-			grid[y][x] = c >= int(n.Int64())
+			grid[y][x] = c >= m
 		}
 	}
 
