@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/Styzex/GoOfLife/config"
 	"github.com/Styzex/GoOfLife/simulation"
 	"github.com/Styzex/GoOfLife/utils"
@@ -19,23 +17,37 @@ func main() {
 
 	grid := utils.GenGrid(seed)
 
-	for i := range config.GridWidth {
-		for j := range config.GridHeight {
+	type cell struct {
+		alive bool
+		x     int
+		y     int
+	}
+
+	cellMap := new([]cell)
+
+	for i := 0; i < config.GridWidth; i++ {
+		for j := 0; j < config.GridHeight; j++ {
 			value, err := simulation.CheckLife(i, j, grid)
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println(value, i, j)
+			currentCell := cell{
+				alive: value,
+				x:     i,
+				y:     j,
+			}
+			*cellMap = append(*cellMap, currentCell)
 		}
 	}
 
 	tick := config.Tick
 	for {
 		log.Debug("Time step", "tick", tick)
+		log.Debug("Cell map", "map", cellMap)
 
 		grid = Update(grid)
 
-		if tick >= 20000 {
+		if tick >= 20 {
 			break
 		}
 		tick += 1

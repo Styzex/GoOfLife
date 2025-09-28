@@ -21,6 +21,31 @@ func GenSeed() (*big.Int, error) {
 }
 
 func GenGrid(seed *big.Int) [][]bool {
+	grid := make([][]bool, config.GridHeight)
+	for y := 0; y < config.GridHeight; y++ {
+		grid[y] = make([]bool, config.GridWidth)
+	}
+
+	seedStr := seed.String()
+	seedLen := len(seedStr)
+
+	for y := 0; y < config.GridHeight; y++ {
+		for x := 0; x < config.GridWidth; x++ {
+			idx := (y*config.GridWidth + x) % seedLen
+
+			c, _ := strconv.Atoi(string(seedStr[idx]))
+			n, _ := rand.Int(rand.Reader, big.NewInt(9))
+
+			grid[y][x] = c >= int(n.Int64())
+		}
+	}
+
+	return grid
+}
+
+// Old GenGrid
+/*
+func GenGrid(seed *big.Int) [][]bool {
 	grid := make([][]bool, config.GridWidth)
 	for i := range grid {
 		grid[i] = make([]bool, config.GridWidth)
@@ -41,3 +66,4 @@ func GenGrid(seed *big.Int) [][]bool {
 
 	return grid
 }
+*/
