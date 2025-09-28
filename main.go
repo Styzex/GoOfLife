@@ -15,6 +15,7 @@ type cell struct {
 }
 
 func main() {
+	//log.SetLevel(log.DebugLevel)
 
 	seed, _ := utils.GenSeed()
 	//seed, _ := new(big.Int).SetString("99999999999999999999", 10)
