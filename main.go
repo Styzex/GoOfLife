@@ -3,37 +3,65 @@ package main
 import (
 	"fmt"
 
+	"github.com/Styzex/GoOfLife/config"
+	"github.com/Styzex/GoOfLife/simulation"
+	"github.com/Styzex/GoOfLife/utils"
+
 	"github.com/charmbracelet/log"
 )
 
-const width = 10
-const height = 10
-
 func main() {
-	grid := make([][]bool, height)
-	for i := range grid {
-		grid[i] = make([]bool, width)
+	log.SetLevel(log.DebugLevel)
+
+	seed, _ := utils.GenSeed()
+	log.Debug("The seed was generated", "seed", seed)
+	log.Debug("The seeds lenght is", "len", len(seed.String()))
+
+	grid := utils.GenGrid(seed)
+
+	for i := range config.GridWidth {
+		for j := range config.GridHeight {
+			value, err := simulation.CheckLife(i, j, grid)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println(value, i, j)
+		}
 	}
 
-	value, err := Check_live(1, 20, grid)
-	if err != nil {
-		log.Fatal(err)
-	}
+	tick := config.Tick
+	for {
+		log.Debug("Time step", "tick", tick)
 
-	print(value)
+		grid = Update(grid)
+
+		if tick >= 20000 {
+			break
+		}
+		tick += 1
+	}
 }
 
-func Check_live(x int, y int, grid [][]bool) (bool, error) {
-	if x > width {
-		err := fmt.Errorf("invalid width  %d, input width is bigger than the height of the grid", x)
-		return false, err
-	} else if y > height {
-		err := fmt.Errorf("invalid height %d, input height is bigger than the height of the grid", y)
-		return false, err
-	} else {
-		if grid[x][y] {
-			return true, nil
-		}
-		return false, nil
+func Update(grid [][]bool) [][]bool {
+	if len(grid) == 0 {
+		return grid
 	}
+
+	newGrid := make([][]bool, config.GridHeight)
+	for i := range newGrid {
+		newGrid[i] = make([]bool, config.GridWidth)
+	}
+
+	for y := range config.GridHeight {
+		for x := range config.GridWidth {
+			isAlive, err := simulation.CheckLife(x, y, grid)
+			if err != nil {
+				log.Error("Check life failed", "err", err)
+				continue
+			}
+			newGrid[y][x] = isAlive
+		}
+	}
+
+	return newGrid
 }
