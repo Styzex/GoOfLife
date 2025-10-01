@@ -18,7 +18,6 @@ func main() {
 	//log.SetLevel(log.DebugLevel)
 
 	seed, _ := utils.GenSeed()
-	//seed, _ := new(big.Int).SetString("99999999999999999999", 10)
 	log.Debug("The seed was generated", "seed", seed)
 	log.Debug("The seeds lenght is", "len", len(seed.String()))
 
@@ -43,7 +42,7 @@ func main() {
 			break
 		}
 
-		if tick >= 10000 {
+		if tick >= 20 {
 			break
 		}
 		tick += 1

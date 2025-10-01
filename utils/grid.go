@@ -10,7 +10,7 @@ func CountLiveCells(grid [][]bool) int {
 	count := 0
 	for y := 0; y < config.GridHeight; y++ {
 		for x := 0; x < config.GridWidth; x++ {
-			if grid[y][x] {
+			if grid[x][y] {
 				count++
 			}
 		}

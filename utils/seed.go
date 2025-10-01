@@ -43,28 +43,3 @@ func GenGrid(seed *big.Int) [][]bool {
 
 	return grid
 }
-
-// Old GenGrid
-/*
-func GenGrid(seed *big.Int) [][]bool {
-	grid := make([][]bool, config.GridWidth)
-	for i := range grid {
-		grid[i] = make([]bool, config.GridWidth)
-	}
-
-	for i := range config.GridWidth {
-		for j := range config.GridHeight {
-			c, _ := strconv.Atoi(string(seed.String()[j]))
-			n, _ := rand.Int(rand.Reader, big.NewInt(9))
-
-			if c >= int(n.Int64()) {
-				grid[i][j] = true
-			} else {
-				grid[i][j] = false
-			}
-		}
-	}
-
-	return grid
-}
-*/
